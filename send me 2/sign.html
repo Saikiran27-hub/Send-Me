@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Send Me</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Sign-In SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Facebook SDK - Replace YOUR_FB_APP_ID with your actual Facebook App ID -->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0&appId=YOUR_FB_APP_ID&autoLogAppEvents=1" nonce="RANDOM_NONCE_VALUE"></script>
+
+    <style>
+         :root {
+            --light-blue: #E9F1FA;
+            --bright-blue: #00ABE4;
+            --white: #FFFFFF;
+            --dark-blue: #003B73;
+            --error-red: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .auth-container {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo img {
+            height: 70px;
+        }
+        
+        h1 {
+            color: var(--dark-blue);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-blue);
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            border-color: var(--bright-blue);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.1);
+        }
+        
+        .password-input {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--bright-blue);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0088cc;
+        }
+        
+        .btn-google {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-google:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .btn-facebook {
+            background-color: #1877F2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-facebook:hover {
+            background-color: #166FE5;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .divider::before {
+            margin-right: 15px;
+        }
+        
+        .divider::after {
+            margin-left: 15px;
+        }
+        
+        .footer-text {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .footer-text a {
+            color: var(--bright-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .forgot-password a {
+            color: var(--bright-blue);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .social-buttons .btn {
+            flex: 1;
+        }
+        
+        .error-message {
+            color: var(--error-red);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Custom styles for Google and Facebook buttons */
+        
+        .g_id_signin {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .fb-login-button {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="logo">
+            <img src="logo.png" alt="Send Me">
+        </div>
+
+        <h1>Sign In</h1>
+        <p class="subtitle">Access your Send Me account</p>
+
+        <form id="signinForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <div class="error-message" id="email-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-input">
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <span class="toggle-password" id="togglePassword">
+                        <i class="far fa-eye"></i>
+                    </span>
+                </div>
+                <div class="error-message" id="password-error"></div>
+            </div>
+
+            <div class="remember-forgot">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                <div class="forgot-password">
+                    <a href="forgot-password.html">Forgot password?</a>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span id="btnText">Sign In</span>
+                <span id="btnLoading" class="loading" style="display: none;"></span>
+            </button>
+
+            <div class="divider">or continue with</div>
+
+            <div class="social-buttons">
+                <!-- Google Sign-In Button -->
+                <!-- Replace YOUR_GOOGLE_CLIENT_ID with your actual Google Client ID -->
+                <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-context="signin" data-ux_mode="popup" data-login_uri="http://your-backend-domain.com/api/auth/google/callback" data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="300">
+                </div>
+
+                <!-- Facebook Login Button -->
+                <div class="fb-login-button" data-width="" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="true" data-scope="public_profile,email" onlogin="checkFacebookLoginState();">
+                </div>
+            </div>
+
+            <div class="footer-text">
+                Don't have an account? <a href="signup.html">Sign up here</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const icon = this.querySelector('i');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+
+        // Form submission with validation
+        document.getElementById('signinForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+
+            // Reset errors
+            document.getElementById('email-error').style.display = 'none';
+            document.getElementById('password-error').style.display = 'none';
+
+            // Simple validation
+            let isValid = true;
+
+            if (!email) {
+                document.getElementById('email-error').textContent = 'Email is required';
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                document.getElementById('email-error').textContent = 'Please enter a valid email';
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!password) {
+                document.getElementById('password-error').textContent = 'Password is required';
+                document.getElementById('password-error').style.display = 'block';
+                isValid = false;
+            } else if (password.length < 6) {
+                document.getElementById('password-error').textContent = 'Password must be at least 6 characters';
+                document.getElementById('password-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Show loading state
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+            submitBtn.disabled = true;
+
+            try {
+                // Simulate API call (replace with actual fetch)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // On success - redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                // Handle errors (e.g., wrong credentials)
+                document.getElementById('password-error').textContent = 'Invalid email or password';
+                document.getElementById('password-error').style.display = 'block';
+            } finally {
+                btnText.style.display = 'inline-block';
+                btnLoading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Facebook SDK initialization
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: 'YOUR_FB_APP_ID', // Replace with your Facebook App ID
+                cookie: true,
+                xfbml: true,
+                version: 'v18.0'
+            });
+
+            // Check login state on load
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+        };
+
+        // Facebook login status callback
+        function statusChangeCallback(response) {
+            if (response.status === 'connected') {
+                // User is logged in with Facebook
+                fetchFacebookUserData();
+            }
+        }
+
+        // Fetch Facebook user data
+        function fetchFacebookUserData() {
+            FB.api('/me?fields=name,email,picture', function(response) {
+                console.log('Facebook user data:', response);
+                // Send this data to your backend for verification
+                sendSocialLoginDataToBackend({
+                    provider: 'facebook',
+                    id: response.id,
+                    name: response.name,
+                    email: response.email,
+                    picture: response.picture ? .data ? .url,
+                    token: FB.getAuthResponse().accessToken
+                });
+            });
+        }
+
+        // Manual check for Facebook login state
+        function checkFacebookLoginState() {
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+        }
+
+        // Handle Google login response
+        function handleGoogleLogin(response) {
+            console.log('Google login response:', response);
+            // Send the credential to your backend
+            sendSocialLoginDataToBackend({
+                provider: 'google',
+                credential: response.credential
+            });
+        }
+
+        // Function to send social login data to your backend
+        function sendSocialLoginDataToBackend(data) {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+
+            // Show loading state
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+            submitBtn.disabled = true;
+
+            // Replace with your actual backend endpoint
+            fetch('/api/auth/social-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        alert('Login failed: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Login failed. Please try again.');
+                })
+                .finally(() => {
+                    btnText.style.display = 'inline-block';
+                    btnLoading.style.display = 'none';
+                    submitBtn.disabled = false;
+                });
+        }
+
+        // Remove the placeholder social login handlers
+        document.querySelector('.btn-google').addEventListener('click', (e) => {
+            e.preventDefault();
+        });
+
+        document.querySelector('.btn-facebook').addEventListener('click', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body>
+
+</html>
